@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,15 +55,23 @@ public class CloudFragment extends Fragment {
         for(int i=0; i<PhotoMsg.length; i++){
             CloudPhoto cloudPhoto = new CloudPhoto();
             cloudPhoto.setUsername(PhotoMsg[i][0]);
-            cloudPhoto.setAge(PhotoMsg[i][5]);
-            cloudPhoto.setScore(PhotoMsg[i][6]);
-            cloudPhoto.setUploadtime(PhotoMsg[i][4]);
+            cloudPhoto.setAge(PhotoMsg[i][4]);
+            cloudPhoto.setScore(PhotoMsg[i][5]);
+            cloudPhoto.setUploadtime(PhotoMsg[i][3]);
             cloudPhoto.setFilename(PhotoMsg[i][1]);
             cloudPhoto.setPath(path+"/"+PhotoMsg[i][1]);
             File file = new File(cloudPhoto.getPath());
             if(!file.exists()){
                 new Thread(){
                     public void run(){
+                        //Log.i("文件名",cloudPhoto.getFilename());
+                        while (cloudPhoto.getFilename() == null){
+                            try {
+                                sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         OkHttpClient client = new OkHttpClient();
                         RequestBody formbody = new FormBody.Builder()
                                 .add("username", Globe.getLoginUser())

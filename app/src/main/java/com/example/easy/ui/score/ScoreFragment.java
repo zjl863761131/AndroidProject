@@ -35,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -256,8 +257,17 @@ public class ScoreFragment extends Fragment {
         try {
             InputStream inputStream = getActivity().getContentResolver().openInputStream(photouri);
             filebuf = convertToBytes(inputStream);
-            //bitmap = BitmapFactory.decodeByteArray(filebuf, 0, filebuf.length);
             imgbase64 = Base64.encodeToString(filebuf,Base64.DEFAULT);
+            while(imgbase64.length() > 500000){
+            Bitmap pic = PicCompress.SampleRateCompress(photopath);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            pic.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            InputStream isBm = new ByteArrayInputStream(baos .toByteArray());
+            filebuf = convertToBytes(isBm);
+            imgbase64 = Base64.encodeToString(filebuf,Base64.DEFAULT);
+            }
+            //bitmap = BitmapFactory.decodeByteArray(filebuf, 0, filebuf.length);
+            System.out.println(imgbase64.length());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {

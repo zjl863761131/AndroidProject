@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide;
 import com.example.easy.R;
 import com.example.easy.tool.FileUtil;
 import com.example.easy.tool.Globe;
+import com.example.easy.tool.PicCompress;
 import com.example.easy.utils.FaceAdd;
 import com.example.easy.utils.FaceSearch;
 import com.example.easy.utils.GetCode;
@@ -35,6 +36,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,7 +50,7 @@ public class FaceAddActivity extends AppCompatActivity {
     private ImageView faceadd_img;
     private Uri photouri;
     private String photopath;
-    private String result;
+    private String result = "";
     private String imgbase64 = "";
     private byte[] filebuf;
     private String uploadfilename;
@@ -66,12 +68,12 @@ public class FaceAddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_face_add);
 
-        faceadd_img = (ImageView)findViewById(R.id.faceadd_img);
-        Button faceadd_select_img = (Button)findViewById(R.id.faceadd_select_img);
-        Button faceadd_takephoto = (Button)findViewById(R.id.faceadd_takephoto);
-        Button faceadd_upload_img = (Button)findViewById(R.id.faceadd_upload_img);
-        EditText faceadd_userid = (EditText)findViewById(R.id.faceadd_userid);
-        EditText faceadd_userinfo = (EditText)findViewById(R.id.faceadd_userinfo);
+        faceadd_img = (ImageView) findViewById(R.id.faceadd_img);
+        Button faceadd_select_img = (Button) findViewById(R.id.faceadd_select_img);
+        Button faceadd_takephoto = (Button) findViewById(R.id.faceadd_takephoto);
+        Button faceadd_upload_img = (Button) findViewById(R.id.faceadd_upload_img);
+        EditText faceadd_userid = (EditText) findViewById(R.id.faceadd_userid);
+        EditText faceadd_userinfo = (EditText) findViewById(R.id.faceadd_userinfo);
         faceadd_select_img.setOnClickListener(new ButtonListener());
         faceadd_takephoto.setOnClickListener(new ButtonListener());
         faceadd_upload_img.setOnClickListener(new ButtonListener());
@@ -91,10 +93,10 @@ public class FaceAddActivity extends AppCompatActivity {
         });
     }
 
-    public class ButtonListener implements View.OnClickListener{
+    public class ButtonListener implements View.OnClickListener {
         @RequiresApi(api = Build.VERSION_CODES.O)
-        public void onClick(View v){
-            switch (v.getId()){
+        public void onClick(View v) {
+            switch (v.getId()) {
                 case R.id.faceadd_takephoto:
                     try {
                         takePhoto();
@@ -109,21 +111,26 @@ public class FaceAddActivity extends AppCompatActivity {
                 case R.id.faceadd_upload_img:
                     UriToBase();
                     try {
-                        if(userid == ""|| imgbase64 == ""){
-                            Toast.makeText(FaceAddActivity.this,"用户组或图片不能为空", Toast.LENGTH_SHORT).show();
-                        }else {
-                        result = FaceAdd.add(access_token,imgbase64,userinfo,userid);}
-                        JSONObject jsonObject = new JSONObject(result);
-                        String result_msg = jsonObject.getString("error_msg");
-                        if(result_msg.equals("SUCCESS")){
-                            Toast.makeText(FaceAddActivity.this, "上传成功",Toast.LENGTH_SHORT).show();
-                            finish();
-                        }else {
-                            Toast.makeText(FaceAddActivity.this,"出错", Toast.LENGTH_SHORT).show();
+                        if (userid == "" || imgbase64 == "") {
+                            Toast.makeText(FaceAddActivity.this, "用户组或图片不能为空", Toast.LENGTH_SHORT).show();
+                        } else {
+                            result = FaceAdd.add(access_token, imgbase64, userinfo, userid);
                         }
-                    }catch (JSONException e){
+                        if (result == "") {
+                            Toast.makeText(FaceAddActivity.this, "出错", Toast.LENGTH_SHORT).show();
+                        } else {
+                            JSONObject jsonObject = new JSONObject(result);
+                            String result_msg = jsonObject.getString("error_msg");
+                            if (result_msg.equals("SUCCESS")) {
+                                Toast.makeText(FaceAddActivity.this, "上传成功", Toast.LENGTH_SHORT).show();
+                                finish();
+                            } else {
+                                Toast.makeText(FaceAddActivity.this, "出错", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    } catch (JSONException e) {
                         e.printStackTrace();
-                    } catch (InterruptedException e){
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
             }
@@ -131,22 +138,21 @@ public class FaceAddActivity extends AppCompatActivity {
     }
 
     //照相
-    public void takePhoto() throws Exception{
+    public void takePhoto() throws Exception {
         SimpleDateFormat timeoff = new SimpleDateFormat("yyyyMMDDHHmmss");
         String filetime = timeoff.format(new Date()).toString();
         String filename = filetime + ".jpg";
         uploadfilename = filename;
         File imgtem = new File(FaceAddActivity.this.getExternalCacheDir(), uploadfilename);
         imgtem.createNewFile();
-        if(Build.VERSION.SDK_INT >= 24){
+        if (Build.VERSION.SDK_INT >= 24) {
             photouri = FileProvider.getUriForFile(FaceAddActivity.this, ".fileprovider", imgtem);
             photopath = imgtem.getPath();
-        }
-        else{
+        } else {
             photouri = Uri.fromFile(imgtem);
             photopath = imgtem.getPath();
         }
-        ActivityCompat.requestPermissions(FaceAddActivity.this, new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+        ActivityCompat.requestPermissions(FaceAddActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         intent.putExtra(MediaStore.EXTRA_OUTPUT, photouri);
         startActivityForResult(intent, 1);
@@ -154,13 +160,13 @@ public class FaceAddActivity extends AppCompatActivity {
 
     //权限请求
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
+        switch (requestCode) {
             case 1:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openGallery();
-                }else{
+                } else {
                     Toast.makeText(FaceAddActivity.this, "读取相册被拒绝", Toast.LENGTH_LONG).show();
                 }
         }
@@ -168,16 +174,16 @@ public class FaceAddActivity extends AppCompatActivity {
 
     //活动响应
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode){
+        switch (requestCode) {
             case 1:
-                if(resultCode == FaceAddActivity.this.RESULT_OK){
+                if (resultCode == FaceAddActivity.this.RESULT_OK) {
                     show_picture();
                 }
                 break;
             case 2:
-                if(resultCode == FaceAddActivity.this.RESULT_OK){
+                if (resultCode == FaceAddActivity.this.RESULT_OK) {
                     HandleSelect(data);
                 }
                 break;
@@ -187,55 +193,65 @@ public class FaceAddActivity extends AppCompatActivity {
     }
 
     //打开相册进行照片选取
-    public void openGallery(){
+    public void openGallery() {
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
         startActivityForResult(intent, 2);
     }
 
     //选取照片后的读取工作
-    private void HandleSelect(@NotNull Intent intent){
+    private void HandleSelect(@NotNull Intent intent) {
         Cursor cursor = null;
         Uri uri = intent.getData();
         photouri = uri;
         cursor = FaceAddActivity.this.getContentResolver().query(uri, null, null, null, null);
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
             uploadfilename = cursor.getString(columnIndex);
             photopath = FileUtil.getFilePathByUri(FaceAddActivity.this, photouri);
         }
-        try{
+        try {
             //Bitmap pic = PicCompress.SampleRateCompress(photopath);
             Glide.with(FaceAddActivity.this).load(photouri)
                     .fitCenter()
                     .into(faceadd_img);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         cursor.close();
     }
 
     //照片显示
-    private void show_picture(){
+    private void show_picture() {
         //Uri uri = intent.getData();
-        try{
+        try {
             Glide.with(FaceAddActivity.this)
                     .load(photouri)
                     .fitCenter()
                     .into(faceadd_img);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     //base64转换
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public String UriToBase(){
+    public String UriToBase() {
         Bitmap bitmap = null;
         try {
-            InputStream inputStream = FaceAddActivity.this.getContentResolver().openInputStream(photouri);
+            InputStream inputStream = getContentResolver().openInputStream(photouri);
             filebuf = convertToBytes(inputStream);
-            imgbase64 = Base64.encodeToString(filebuf,Base64.DEFAULT);
+            imgbase64 = Base64.encodeToString(filebuf, Base64.DEFAULT);
+            while (imgbase64.length() > 2000000) {
+                Bitmap pic = PicCompress.SampleRateCompress(photopath);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                pic.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                InputStream isBm = new ByteArrayInputStream(baos.toByteArray());
+                filebuf = convertToBytes(isBm);
+                imgbase64 = Base64.encodeToString(filebuf, Base64.DEFAULT);
+            }
+            //bitmap = BitmapFactory.decodeByteArray(filebuf, 0, filebuf.length);
+            System.out.println(imgbase64.length());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -246,11 +262,11 @@ public class FaceAddActivity extends AppCompatActivity {
 
     //将输入流转换成字节数组
     @NotNull
-    private byte[] convertToBytes(InputStream inputStream)throws Exception{
+    private byte[] convertToBytes(InputStream inputStream) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] buf = new byte[1024];
         int len = 0;
-        while((len = inputStream.read(buf)) > 0 ){
+        while ((len = inputStream.read(buf)) > 0) {
             out.write(buf, 0, len);
         }
         out.close();

@@ -3,6 +3,7 @@ package com.example.easy.ui.facesearch;
 import com.bumptech.glide.Glide;
 import com.example.easy.R;
 import com.example.easy.tool.FileUtil;
+import com.example.easy.tool.PicCompress;
 import com.example.easy.utils.FaceMatch;
 import com.example.easy.utils.GetCode;
 
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,6 +55,8 @@ public class FaceMatchActivity extends AppCompatActivity {
     private byte[] filebuf2;
     private int RequestCode = 1;
     private TextView text2;
+    private String photopath1 = "";
+    private String photopath2 = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +134,7 @@ public class FaceMatchActivity extends AppCompatActivity {
                             String result = jsonObject.getString("result");
                             JSONObject result1 = new JSONObject(result);
                             String score = result1.getString("score");
-                            int i = Integer.parseInt( score );
+                            float i = Float.parseFloat(score);
                             if(i > 80){
                                 text2.setText("是同一人，相似度为：" + score);
                             }else {
@@ -162,8 +166,10 @@ public class FaceMatchActivity extends AppCompatActivity {
         imgtem.createNewFile();
         if (Build.VERSION.SDK_INT >= 24) {
             photouri1 = FileProvider.getUriForFile(FaceMatchActivity.this, ".fileprovider", imgtem);
+            photopath1 = imgtem.getPath();
         } else {
             photouri1 = Uri.fromFile(imgtem);
+            photopath1 = imgtem.getPath();
         }
         ActivityCompat.requestPermissions(FaceMatchActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RequestCode);
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
@@ -180,8 +186,10 @@ public class FaceMatchActivity extends AppCompatActivity {
         imgtem.createNewFile();
         if (Build.VERSION.SDK_INT >= 24) {
             photouri2 = FileProvider.getUriForFile(FaceMatchActivity.this, ".fileprovider", imgtem);
+            photopath2 = imgtem.getPath();
         } else {
             photouri2 = Uri.fromFile(imgtem);
+            photopath2 = imgtem.getPath();
         }
         ActivityCompat.requestPermissions(FaceMatchActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RequestCode);
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
@@ -275,6 +283,7 @@ public class FaceMatchActivity extends AppCompatActivity {
         cursor = FaceMatchActivity.this.getContentResolver().query(uri, null, null, null, null);
         if (cursor.moveToFirst()) {
             int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+            photopath1 = FileUtil.getFilePathByUri(FaceMatchActivity.this, photouri1);
         }
         cursor.close();
     }
@@ -287,6 +296,7 @@ public class FaceMatchActivity extends AppCompatActivity {
         cursor = FaceMatchActivity.this.getContentResolver().query(uri, null, null, null, null);
         if (cursor.moveToFirst()) {
             int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+            photopath2 = FileUtil.getFilePathByUri(FaceMatchActivity.this, photouri2);
         }
         cursor.close();
     }
@@ -296,9 +306,19 @@ public class FaceMatchActivity extends AppCompatActivity {
     public String UriToBase1() {
         Bitmap bitmap = null;
         try {
-            InputStream inputStream = FaceMatchActivity.this.getContentResolver().openInputStream(photouri1);
+            InputStream inputStream = getContentResolver().openInputStream(photouri1);
             filebuf1 = convertToBytes(inputStream);
-            imgbase64_1 = Base64.encodeToString(filebuf1, Base64.DEFAULT);
+            imgbase64_1 = Base64.encodeToString(filebuf1,Base64.DEFAULT);
+            while(imgbase64_1.length() > 500000){
+                Bitmap pic = PicCompress.SampleRateCompress(photopath1);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                pic.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                InputStream isBm = new ByteArrayInputStream(baos .toByteArray());
+                filebuf1 = convertToBytes(isBm);
+                imgbase64_1 = Base64.encodeToString(filebuf1,Base64.DEFAULT);
+            }
+            //bitmap = BitmapFactory.decodeByteArray(filebuf, 0, filebuf.length);
+            System.out.println(imgbase64_1.length());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -312,9 +332,19 @@ public class FaceMatchActivity extends AppCompatActivity {
     public String UriToBase2() {
         Bitmap bitmap = null;
         try {
-            InputStream inputStream = FaceMatchActivity.this.getContentResolver().openInputStream(photouri2);
+            InputStream inputStream = getContentResolver().openInputStream(photouri2);
             filebuf2 = convertToBytes(inputStream);
-            imgbase64_2 = Base64.encodeToString(filebuf2, Base64.DEFAULT);
+            imgbase64_2 = Base64.encodeToString(filebuf2,Base64.DEFAULT);
+            while(imgbase64_2.length() > 500000){
+                Bitmap pic = PicCompress.SampleRateCompress(photopath2);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                pic.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                InputStream isBm = new ByteArrayInputStream(baos .toByteArray());
+                filebuf2 = convertToBytes(isBm);
+                imgbase64_2 = Base64.encodeToString(filebuf2,Base64.DEFAULT);
+            }
+            //bitmap = BitmapFactory.decodeByteArray(filebuf, 0, filebuf.length);
+            System.out.println(imgbase64_2.length());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {

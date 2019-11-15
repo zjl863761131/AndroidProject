@@ -48,17 +48,17 @@ public class GetPicMsg {
                         throw new IOException("Unexpected code" + response);
                     }
                     result = new JSONArray(response.body().string());
-                    PhotoMsg = new String[result.length()][7];
+                    PhotoMsg = new String[result.length()][6];
                     for (int i = 0; i < result.length(); i++) {
                         Gson gson = new Gson();
                         UserFiles userfiles = gson.fromJson(result.getString(i), UserFiles.class);
                         PhotoMsg[i][0] = userfiles.username;
                         PhotoMsg[i][1] = userfiles.filename;
                         PhotoMsg[i][2] = userfiles.filepath;
-                        PhotoMsg[i][3] = userfiles.filepathtmp;
-                        PhotoMsg[i][4] = userfiles.uploadtime.toString();
-                        PhotoMsg[i][5] = userfiles.age;
-                        PhotoMsg[i][6] = userfiles.score;
+                        //PhotoMsg[i][3] = userfiles.filepathtmp;
+                        PhotoMsg[i][3] = userfiles.uploadtime.toString();
+                        PhotoMsg[i][4] = userfiles.age;
+                        PhotoMsg[i][5] = userfiles.score;
                         //PhotoMsg[i][5] = userfiles.img;
                     }
                 } catch (Exception e) {
@@ -80,7 +80,7 @@ public class GetPicMsg {
         public String username;
         public String filename;
         public String filepath;
-        public String filepathtmp;
+        //public String filepathtmp;
         public Date uploadtime;
         public String age;
         public String score;

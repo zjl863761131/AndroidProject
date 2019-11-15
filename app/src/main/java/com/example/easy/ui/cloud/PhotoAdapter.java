@@ -54,7 +54,7 @@ public class PhotoAdapter extends ArrayAdapter<CloudPhoto> {
         CloudPhoto cloudPhoto = getItem(position);
         File f = new File(cloudPhoto.path);
         if(!f.exists()){
-            cloudPhoto.setPath(defultpath);
+            cloudPhoto.setPath(defultpath +".jpg");
         }
         Bitmap bitmap = BitmapFactory.decodeFile(cloudPhoto.path);
         Glide.with(getContext()).load(bitmap).fitCenter().into(cloud_phto_show);

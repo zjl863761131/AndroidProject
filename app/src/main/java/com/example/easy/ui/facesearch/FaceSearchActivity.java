@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.example.easy.R;
 import com.example.easy.tool.FileUtil;
 import com.example.easy.tool.Globe;
+import com.example.easy.tool.PicCompress;
 import com.example.easy.utils.FaceSearch;
 import com.example.easy.utils.GetCode;
 
@@ -33,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -256,9 +258,19 @@ public class FaceSearchActivity extends AppCompatActivity {
     public String UriToBase(){
         Bitmap bitmap = null;
         try {
-            InputStream inputStream = FaceSearchActivity.this.getContentResolver().openInputStream(photouri);
+            InputStream inputStream = getContentResolver().openInputStream(photouri);
             filebuf = convertToBytes(inputStream);
             imgbase64 = Base64.encodeToString(filebuf,Base64.DEFAULT);
+            while(imgbase64.length() > 500000){
+                Bitmap pic = PicCompress.SampleRateCompress(photopath);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                pic.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                InputStream isBm = new ByteArrayInputStream(baos .toByteArray());
+                filebuf = convertToBytes(isBm);
+                imgbase64 = Base64.encodeToString(filebuf,Base64.DEFAULT);
+            }
+            //bitmap = BitmapFactory.decodeByteArray(filebuf, 0, filebuf.length);
+            System.out.println(imgbase64.length());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {
