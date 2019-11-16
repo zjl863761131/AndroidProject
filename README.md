@@ -3,7 +3,7 @@
 ![登录界面](https://github.com/zjl863761131/AndroidProject/blob/master/photo/login.png)
 ![注册界面](https://github.com/zjl863761131/AndroidProject/blob/master/photo/register.png)
 ![人脸检测](https://github.com/zjl863761131/AndroidProject/blob/master/photo/score.png)
-![人脸检测结果](https://github.com/zjl863761131/AndroidProject/blob/master/photo/facescore.png)
+![人脸检测结果](https://github.com/zjl863761131/AndroidProject/blob/master/photo/facescore.jpg)
 ![云相册](https://github.com/zjl863761131/AndroidProject/blob/master/photo/cloud.jpg)
 ![排行榜](https://github.com/zjl863761131/AndroidProject/blob/master/photo/rankList.jpg)
 ![个人中心](https://github.com/zjl863761131/AndroidProject/blob/master/photo/userCenter.jpg)
