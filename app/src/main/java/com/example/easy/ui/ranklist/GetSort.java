@@ -12,10 +12,8 @@ import org.json.JSONArray;
 import java.io.IOException;
 import java.util.Date;
 
-import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static java.lang.Thread.sleep;
@@ -29,7 +27,7 @@ public class GetSort {
     private static JSONArray result = null;
     //private static Response response;
     //private static InputStream[] PhotoBitMap;
-    private static String[][] PhotoMsg;
+    private static String[][] PhotoMsgRank;
 
     public static void downloadPhoto() {
         new Thread() {
@@ -46,17 +44,17 @@ public class GetSort {
                         throw new IOException("Unexpected code" + response);
                     }
                     result = new JSONArray(response.body().string());
-                    PhotoMsg = new String[result.length()][6];
+                    PhotoMsgRank = new String[result.length()][6];
                     for (int i = 0; i < result.length(); i++) {
                         Gson gson = new Gson();
                         UserFiles userfiles = gson.fromJson(result.getString(i), UserFiles.class);
-                        PhotoMsg[i][0] = userfiles.username;
-                        PhotoMsg[i][1] = userfiles.filename;
-                        PhotoMsg[i][2] = userfiles.filepath;
-                        PhotoMsg[i][3] = userfiles.uploadtime.toString();
-                        PhotoMsg[i][4] = userfiles.age;
-                        PhotoMsg[i][5] = userfiles.score;
-                        //PhotoMsg[i][5] = userfiles.img;
+                        PhotoMsgRank[i][0] = userfiles.username;
+                        PhotoMsgRank[i][1] = userfiles.filename;
+                        PhotoMsgRank[i][2] = userfiles.filepath;
+                        PhotoMsgRank[i][3] = userfiles.uploadtime.toString();
+                        PhotoMsgRank[i][4] = userfiles.age;
+                        PhotoMsgRank[i][5] = userfiles.score;
+                        //PhotoMsgRank[i][5] = userfiles.img;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -70,7 +68,7 @@ public class GetSort {
                 e.printStackTrace();
             }
         }
-        Globe.setPhotoMsg(PhotoMsg);
+        Globe.setPhotoMsgRank(PhotoMsgRank);
     }
 
     public class UserFiles{

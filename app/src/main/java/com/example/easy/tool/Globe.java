@@ -10,6 +10,16 @@ public class Globe extends Application {
     public static String LoginUser = "";
     public static InputStream[] PhotoBitMap = null;
     public static String[][] PhotoMsg = null;
+    public static String[][] PhotoMsgRank = null;
+
+    public static void setPhotoMsgRank(String[][] photoMsgRank) {
+        PhotoMsgRank = photoMsgRank;
+    }
+
+    public static String[][] getPhotoMsgRank() {
+        return PhotoMsgRank;
+    }
+
     public static String path = "";
     public static String[][] UserSearch = null;
 

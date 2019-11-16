@@ -110,7 +110,7 @@ public class ScoreFragment extends Fragment {
                         String string = "";
                         for(int n=0;n<length1;n++) {
                             string = json2.getString(n);
-                         }
+                        }
                         JSONObject json3 = new JSONObject(string);
                         //String face_shape = json3.getString("face_shape");
                         //String face_type = json3.getString("face_type");
@@ -186,7 +186,7 @@ public class ScoreFragment extends Fragment {
 //                        Bitmap map = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(photouri));
 //                        scoreimg.setImageBitmap(map);
 //                        data.setData(photouri);
-                        show_picture();
+                    show_picture();
 //                    }catch (FileNotFoundException e){
 //                        e.printStackTrace();
 //                    }
@@ -259,12 +259,12 @@ public class ScoreFragment extends Fragment {
             filebuf = convertToBytes(inputStream);
             imgbase64 = Base64.encodeToString(filebuf,Base64.DEFAULT);
             while(imgbase64.length() > 500000){
-            Bitmap pic = PicCompress.SampleRateCompress(photopath);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            pic.compress(Bitmap.CompressFormat.PNG, 100, baos);
-            InputStream isBm = new ByteArrayInputStream(baos .toByteArray());
-            filebuf = convertToBytes(isBm);
-            imgbase64 = Base64.encodeToString(filebuf,Base64.DEFAULT);
+                Bitmap pic = PicCompress.SampleRateCompress(photopath);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                pic.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                InputStream isBm = new ByteArrayInputStream(baos .toByteArray());
+                filebuf = convertToBytes(isBm);
+                imgbase64 = Base64.encodeToString(filebuf,Base64.DEFAULT);
             }
             //bitmap = BitmapFactory.decodeByteArray(filebuf, 0, filebuf.length);
             System.out.println(imgbase64.length());

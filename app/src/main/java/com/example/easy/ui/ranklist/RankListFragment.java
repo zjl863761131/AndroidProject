@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import com.example.easy.R;
 import com.example.easy.tool.Globe;
 import com.example.easy.ui.cloud.CloudPhoto;
-import com.example.easy.ui.cloud.GetPicMsg;
 import com.example.easy.ui.cloud.PhotoAdapter;
 import com.example.easy.ui.cloud.PhotoShowActivity;
 
@@ -47,7 +46,7 @@ public class RankListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         GetSort.downloadPhoto();
         String path = Globe.getPath();
-        String[][] PhotoMsg =  Globe.getPhotoMsg();
+        String[][] PhotoMsg =  Globe.getPhotoMsgRank();
         //InputStream[] PhotoBitmap = Globe.getPhotoBitMap();
 
         super.onCreate(savedInstanceState);
@@ -65,7 +64,7 @@ public class RankListFragment extends Fragment {
             if(!file.exists()){
                 new Thread(){
                     public void run(){
-                        while (cloudPhoto.getFilename() == null){
+                        while (cloudPhoto.getFilename() == null|| cloudPhoto.getUsername() == null){
                             try {
                                 sleep(100);
                             } catch (InterruptedException e) {
@@ -74,7 +73,7 @@ public class RankListFragment extends Fragment {
                         }
                         OkHttpClient client = new OkHttpClient();
                         RequestBody formbody = new FormBody.Builder()
-                                .add("username", Globe.getLoginUser())
+                                .add("username",cloudPhoto.getUsername() )
                                 .add("filename", cloudPhoto.getFilename())
                                 .build();
                         Request request = new Request.Builder()

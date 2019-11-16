@@ -20,9 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.easy.R;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 public class PhotoAdapter extends ArrayAdapter<CloudPhoto> {
     private ArrayList<CloudPhoto> Object = new ArrayList<CloudPhoto>();
@@ -49,15 +47,16 @@ public class PhotoAdapter extends ArrayAdapter<CloudPhoto> {
     public View getView(int position, View convertView, ViewGroup parent){
         String defultpath =getResourcesUri(R.drawable.defult);
         View view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
-        ImageView cloud_phto_show = (ImageView)view.findViewById(R.id.cloud_photo_show);
+        ImageView cloud_photo_show = (ImageView)view.findViewById(R.id.cloud_photo_show);
         TextView text = (TextView)view.findViewById(R.id.cloud_photo_text);
         CloudPhoto cloudPhoto = getItem(position);
-        File f = new File(cloudPhoto.path);
+        String photoPath = cloudPhoto.path;
+        File f = new File(photoPath);
         if(!f.exists()){
-            cloudPhoto.setPath(defultpath +".jpg");
+            photoPath = defultpath + ".jpg";
         }
-        Bitmap bitmap = BitmapFactory.decodeFile(cloudPhoto.path);
-        Glide.with(getContext()).load(bitmap).fitCenter().into(cloud_phto_show);
+        Bitmap bitmap = BitmapFactory.decodeFile(photoPath);
+        Glide.with(getContext()).load(bitmap).fitCenter().into(cloud_photo_show);
         text.setText("颜值" + cloudPhoto.score + "\n" + "年龄" + cloudPhoto.age + "\n" + cloudPhoto.uploadtime);
         return view;
     }

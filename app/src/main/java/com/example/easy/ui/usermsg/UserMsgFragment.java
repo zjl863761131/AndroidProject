@@ -16,11 +16,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.easy.MainActivity;
+import com.example.easy.R;
 import com.example.easy.tool.Globe;
 import com.example.easy.ui.facesearch.FaceMainActivity;
 import com.example.easy.ui.login.Logout;
-import com.example.easy.MainActivity;
-import com.example.easy.R;
 import com.google.gson.Gson;
 
 import java.io.BufferedOutputStream;
@@ -42,8 +42,8 @@ public class UserMsgFragment extends Fragment {
     private String msg_uri = "http://114.55.64.152:3000/getmsg";
     private String msg_logout = "http://114.55.64.152:3000/logout";
     private String downloadheaduri = "http://114.55.64.152:3000/downloadhead";
-    private String result;
-//    private String msg_uri = "http://192.168.1.103:3000/getmsg";
+    private String result = "";
+    //    private String msg_uri = "http://192.168.1.103:3000/getmsg";
 //    private String msg_logout = "http://192.168.1.103:3000/logout";
 //    private String downloadheaduri = "http://192.168.1.103:3000/downloadhead";
     private InputStream HeadBitMap;
@@ -64,7 +64,7 @@ public class UserMsgFragment extends Fragment {
         final Button logout = root.findViewById(R.id.logout);
         final Button toface = root.findViewById(R.id.toface);
         final TextView msgnum = root.findViewById(R.id.msg_num);
-        msgusername.setText(user.username);
+        msgusername.setText(Globe.getLoginUser());
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String datetime = format.format(user.createtime);
         msgtime.setText(datetime);

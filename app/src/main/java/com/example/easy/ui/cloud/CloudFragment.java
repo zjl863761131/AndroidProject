@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
-import com.example.easy.tool.Globe;
 import com.example.easy.R;
+import com.example.easy.tool.Globe;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -65,7 +64,7 @@ public class CloudFragment extends Fragment {
                 new Thread(){
                     public void run(){
                         //Log.i("文件名",cloudPhoto.getFilename());
-                        while (cloudPhoto.getFilename() == null){
+                        while (cloudPhoto.getFilename() == null || cloudPhoto.getUsername() == null){
                             try {
                                 sleep(100);
                             } catch (InterruptedException e) {
@@ -74,7 +73,7 @@ public class CloudFragment extends Fragment {
                         }
                         OkHttpClient client = new OkHttpClient();
                         RequestBody formbody = new FormBody.Builder()
-                                .add("username", Globe.getLoginUser())
+                                .add("username", cloudPhoto.getUsername())
                                 .add("filename", cloudPhoto.getFilename())
                                 .build();
                         Request request = new Request.Builder()
@@ -99,7 +98,7 @@ public class CloudFragment extends Fragment {
                         }
                     }
                 }.start();
-        }
+            }
 
 //            byte [] img = new byte[0];
 //            try {
@@ -111,7 +110,7 @@ public class CloudFragment extends Fragment {
 //            cloudPhoto.setBytes(img);
             //cloudPhoto.setBytes(Base64.decode(PhotoMsg[i][5],0));
             photoList.add(cloudPhoto);
-    }
+        }
 
         adapter = new PhotoAdapter(getActivity(),R.layout.cloud_photo, photoList);
         listView = root.findViewById(R.id.cloudlist);

@@ -1,14 +1,13 @@
 package com.example.easy.ui.cloud;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.easy.R;
@@ -39,7 +38,7 @@ public class PhotoShowActivity extends AppCompatActivity {
         TextView photo_show_text = (TextView)findViewById(R.id.photo_show_text);
         Button photo_show_button = (Button)findViewById(R.id.photo_show_button);
 
-        Glide.with(PhotoShowActivity.this).load(path).fitCenter().into(photo_show_img);
+        Glide.with(PhotoShowActivity.this).asBitmap().load(path).centerCrop().into(photo_show_img);
         photo_show_text.setText("照片名：" + filename + "\n" + "上传者：" + username + "\n" + "评分：" + score + "\n" + "年龄" + age + "\n" + "上传时间：" + uploadtime);
         photo_show_button.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -34,7 +34,7 @@ import okhttp3.Response;
 public class ShowScoreActivity extends AppCompatActivity {
 
     private String uploadUrl = "http://114.55.64.152:3000/upload";
-//    private String uploadUrlTmp = "http://114.55.64.152:3000/uploadtmp";
+    //    private String uploadUrlTmp = "http://114.55.64.152:3000/uploadtmp";
 //private String uploadUrl = "http://192.168.1.103:3000/upload";
     //private String uploadUrlTmp = "http://192.168.1.103:3000/uploadtmp";
     private String username;
@@ -182,5 +182,5 @@ public class ShowScoreActivity extends AppCompatActivity {
 //        System.out.println(pathandname);
 //        System.out.println(a[a.length-1]);
         return a[a.length-1];
-     }
+    }
 }
